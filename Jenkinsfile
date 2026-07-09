@@ -8,6 +8,12 @@ pipeline {
     }
 
     stages {
+        stage('Docker') {
+            steps {
+                sh 'docker build -t my-playwright .'
+            }
+        }
+
         stage('Build') {
             agent {
                 docker {
@@ -80,17 +86,17 @@ pipeline {
         stage('Deploy Staging') {
             agent {
                 docker {
-                    image 'node:18-alpine'
+                    image 'my-playwright'
                     reuseNode true
                 }
             }
             steps {
                 sh '''
-                   npm install netlify-cli
-                   node_modules/.bin/netlify --version
+                   
+                   netlify --version
                    echo "Deploying to Netlify As Pre-Integ..."
-                   node_modules/.bin/netlify status
-                   node_modules/.bin/netlify deploy --dir=build
+                   netlify status
+                   netlify deploy --dir=build
                 '''
             }
         }
@@ -106,17 +112,17 @@ pipeline {
         stage('Deploy Prod') {
             agent {
                 docker {
-                    image 'node:18-alpine'
+                    image 'my-playwright'
                     reuseNode true
                 }
             }
             steps {
                 sh '''
-                   npm install netlify-cli
-                   node_modules/.bin/netlify --version
+                   
+                   netlify --version
                    echo "Deploying to Netlify Only Using Jenkins..."
-                   node_modules/.bin/netlify status
-                   node_modules/.bin/netlify deploy --dir=build --prod
+                   netlify status
+                   netlify deploy --dir=build --prod
                 '''
             }
         }
@@ -124,7 +130,7 @@ pipeline {
         stage('Prod E2E') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/playwright:v1.39.0'
+                    image 'my-playwright'
                     reuseNode true
                 }
             }
