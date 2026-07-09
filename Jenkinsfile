@@ -86,7 +86,7 @@ pipeline {
                 sh '''
                    npm install netlify-cli
                    node_modules/.bin/netlify --version
-                   echo "Deploying to Netlify..."
+                   echo "Deploying to Netlify Only Using Jenkins..."
                    node_modules/.bin/netlify status
                    node_modules/.bin/netlify deploy --dir=build --prod
                 '''
